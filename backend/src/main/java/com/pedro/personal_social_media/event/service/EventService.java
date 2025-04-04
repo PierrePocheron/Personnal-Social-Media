@@ -10,7 +10,7 @@ import com.pedro.personal_social_media.person.repository.PersonRepository;
 import com.pedro.personal_social_media.event.repository.EventRepository;
 import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
-
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -91,6 +91,18 @@ public class EventService {
                     .build();
         })
         .collect(Collectors.toList());
+}
+
+public List<Event> getMyUpcomingEvents(UUID meId) {
+    return getMyEvents(meId).stream()
+            .filter(event -> event.getStartDate() != null && !event.getStartDate().isBefore(LocalDate.now()))
+            .toList();
+}
+
+public List<Event> getMyPastEvents(UUID meId) {
+    return getMyEvents(meId).stream()
+            .filter(event -> event.getEndDate() != null && event.getEndDate().isBefore(LocalDate.now()))
+            .toList();
 }
 
 }

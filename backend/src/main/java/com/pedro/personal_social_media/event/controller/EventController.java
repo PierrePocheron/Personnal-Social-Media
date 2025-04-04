@@ -38,4 +38,14 @@ public class EventController {
     public List<EventSummaryDTO> getMyEventSummaries() {
         return eventService.getMyEventSummaries(meId);
     }
+
+    @GetMapping("/mine/upcoming")
+public List<Event> getMyUpcomingEvents() {
+    return eventService.getMyUpcomingEvents(meId);
+}
+
+@GetMapping("/mine/past")
+public List<Event> getMyPastEvents() {
+    return eventService.getMyPastEvents(meId);
+}
 }
