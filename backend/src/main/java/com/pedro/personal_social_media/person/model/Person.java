@@ -2,6 +2,7 @@ package com.pedro.personal_social_media.person.model;
 
 import lombok.*;
 import com.pedro.personal_social_media.relation.model.Relation;
+import com.pedro.personal_social_media.event.model.Participation;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
@@ -50,4 +51,8 @@ public class Person {
 
     @Relationship(type = "RELATION", direction = Relationship.Direction.OUTGOING)
     private List<Relation> relations;
+
+    @Relationship(type = "PARTICIPATED_IN", direction = Relationship.Direction.OUTGOING)
+    private List<Participation> participations;
+
 }
