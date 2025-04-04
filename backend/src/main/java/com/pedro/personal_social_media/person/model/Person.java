@@ -1,12 +1,15 @@
 package com.pedro.personal_social_media.person.model;
 
 import lombok.*;
+import com.pedro.personal_social_media.relation.model.Relation;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.neo4j.core.schema.Relationship;
 
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Node("Person")
@@ -44,4 +47,7 @@ public class Person {
 
     @Past(message = "La date de naissance doit être dans le passé")
     private LocalDate birthdate;
+
+    @Relationship(type = "RELATION", direction = Relationship.Direction.OUTGOING)
+    private List<Relation> relations;
 }
