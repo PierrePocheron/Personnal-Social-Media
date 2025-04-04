@@ -12,7 +12,7 @@ import java.util.UUID;
 @Service
 public class MeService {
 
-    @Value("${app.me.uuid}")
+    @Value("${app.me.id}")
     private UUID meId;
 
     private final PersonRepository personRepository;
