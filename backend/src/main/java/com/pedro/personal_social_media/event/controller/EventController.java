@@ -40,12 +40,12 @@ public class EventController {
     }
 
     @GetMapping("/mine/upcoming")
-public List<Event> getMyUpcomingEvents() {
-    return eventService.getMyUpcomingEvents(meId);
-}
+    public List<Event> getMyUpcomingEvents() {
+        return eventService.getMyUpcomingEvents(meId);
+    }
 
-@GetMapping("/mine/past")
-public List<Event> getMyPastEvents() {
-    return eventService.getMyPastEvents(meId);
-}
+    @GetMapping("/mine/past")
+    public List<Event> getMyPastEvents() {
+        return eventService.getMyPastEvents(meId);
+    }
 }
