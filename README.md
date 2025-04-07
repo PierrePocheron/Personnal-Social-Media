@@ -1,4 +1,4 @@
-# 🧠 Personal Social Media 
+# 🧠 Personal Social Media
 
 Une application sociale privée pour organiser, visualiser et enrichir tes relations humaines avec un graphe vivant 📈
 
@@ -173,9 +173,3 @@ Relations :
 ```cypher
 MATCH (n) DETACH DELETE n;
 ```
-
-</details>
-
----
-
-💡 *Tu peux adapter ce README à ton futur frontend ou ajouter une démo visuelle en bonus plus tard !*
