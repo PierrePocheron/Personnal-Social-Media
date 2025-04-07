@@ -1,21 +1,17 @@
-package com.pedro.personal_social_media.event.controller;
+package com.pedro.personal_social_media;
 
-import com.pedro.personal_social_media.event.service.EventService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
-
-
 @RestController
-@CrossOrigin(origins = "*")
 public class HomeController {
 
-
-  @GetMapping("/")
-  public Map<String, String> home() {
-      return Map.of(
-          "message", "👋 Bienvenue sur le projet Social Graph de Pedro !",
-          "documentation", "/api/me"
-      );
-  }
+    @GetMapping("/")
+    public Map<String, String> home() {
+        return Map.of(
+                "message", "👋 Bienvenue sur le projet Social Graph de Pedro !",
+                "documentation", "/api/me"
+        );
+    }
 }
