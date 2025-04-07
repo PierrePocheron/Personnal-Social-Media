@@ -1,6 +1,8 @@
 package com.pedro.personal_social_media.person.service;
 
 import com.pedro.personal_social_media.person.model.Person;
+import com.pedro.personal_social_media.person.dto.MeStatsDTO;
+import com.pedro.personal_social_media.event.model.Participation;
 import com.pedro.personal_social_media.person.repository.PersonRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +42,30 @@ public class MeService {
             return personRepository.save(pedro);
         });
     }
+
+    public MeStatsDTO getMyStats() {
+        Person me = personRepository.findById(meId)
+                .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
+
+        int relationsCount = me.getRelations() != null ? me.getRelations().size() : 0;
+        int eventsCount = me.getParticipations() != null ? me.getParticipations().size() : 0;
+
+        double averageNote = Optional.ofNullable(me.getParticipations())
+                .orElseGet(java.util.Collections::emptyList)
+                .stream()
+                .mapToInt(Participation::getNote)
+                .average()
+                .orElse(0.0);
+
+        return MeStatsDTO.builder()
+                .id(me.getId())
+                .name(me.getName())
+                .relationsCount(relationsCount)
+                .eventsCount(eventsCount)
+                .averageNote(averageNote)
+                .build();
+    }
+
 
     @PostConstruct
     public void initMe() {

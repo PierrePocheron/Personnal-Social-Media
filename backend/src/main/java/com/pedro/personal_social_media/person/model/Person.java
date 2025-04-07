@@ -55,4 +55,8 @@ public class Person {
     @Relationship(type = "PARTICIPATED_IN", direction = Relationship.Direction.OUTGOING)
     private List<Participation> participations;
 
+    public String getName() {
+    return this.firstName + " " + this.lastName;
+}
+
 }

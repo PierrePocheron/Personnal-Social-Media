@@ -1,6 +1,7 @@
 package com.pedro.personal_social_media.person.controller;
 
 import com.pedro.personal_social_media.person.model.Person;
+import com.pedro.personal_social_media.person.dto.MeStatsDTO;
 import com.pedro.personal_social_media.person.service.MeService;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,11 @@ public class MeController {
     @GetMapping
     public Person getMe() {
         return meService.getMe();
+    }
+
+    @GetMapping("/stats")
+    public MeStatsDTO getStats() {
+        return meService.getMyStats();
     }
 
     @PostMapping("/install")
