@@ -1,15 +1,22 @@
-import { Component, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Person } from '@src/app/models/person.model';
+import { PersonService } from '@src/app/services/person.service';
 
 @Component({
   selector: 'app-user-card',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './user-card.component.html',
-  styleUrls: ['./user-card.component.scss']
 })
-export class UserCardComponent {
-  @Input() name: string = 'Pedro';
-  @Input() job: string = 'Développeur Fullstack';
-  @Input() company: string = 'Pedro Corp';
-  @Input() email: string = 'pierre@example.com';
-  @Input() phone: string = '+33612345678';
+export class UserCardComponent implements OnInit {
+  me: Person | null = null;
+
+  constructor(private personService: PersonService) {}
+
+  ngOnInit(): void {
+    this.personService.getMe().subscribe((data) => {
+      this.me = data;
+    });
+  }
 }
