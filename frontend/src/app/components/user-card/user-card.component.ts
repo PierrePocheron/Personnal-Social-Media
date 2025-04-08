@@ -1,22 +1,29 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Person } from '@src/app/models/person.model';
-import { PersonService } from '@src/app/services/person.service';
+import { Component, Input } from '@angular/core';
+import { Person, Participation } from '@src/app/models/person.model';
 
 @Component({
   selector: 'app-user-card',
   standalone: true,
-  imports: [CommonModule],
   templateUrl: './user-card.component.html',
+  styleUrls: ['./user-card.component.scss'],
 })
-export class UserCardComponent implements OnInit {
-  me: Person | null = null;
+export class UserCardComponent {
+  @Input() user!: Person;
 
-  constructor(private personService: PersonService) {}
+  get initials(): string {
+    const first = this.user.firstName?.[0] || '';
+    const last = this.user.lastName?.[0] || '';
+    return `${first}${last}`.toUpperCase();
+  }
 
-  ngOnInit(): void {
-    this.personService.getMe().subscribe((data) => {
-      this.me = data;
-    });
+  get averageNote(): number | string {
+    const participations = this.user.participations ?? [];
+    if (participations.length === 0) return '-';
+
+    const total = participations
+      .map((p: Participation) => p.note)
+      .reduce((a: number, b: number) => a + b, 0);
+
+    return Math.round(total / participations.length);
   }
 }

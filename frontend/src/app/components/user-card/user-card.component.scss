@@ -1,3 +1,11 @@
-:host {
-    display: block;
+.user-card {
+    @apply ring-1 ring-gray-200;
+    transition: all 0.2s ease-in-out;
+    &:hover {
+        @apply shadow-2xl;
+    }
+    .avatar {
+        font-family: 'Inter', sans-serif;
+        letter-spacing: -1px;
+    }
 }
