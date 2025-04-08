@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
+import { MainLayoutComponent } from '@app/layouts/main-layout/main-layout.component';
+import { BentoGridComponent } from '@app/components/bento/bento-grid.component';
+
 
 @Component({
   selector: 'app-home',
-  imports: [],
+  standalone: true,
+  imports: [MainLayoutComponent, BentoGridComponent],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrls: ['./home.component.scss']
 })
-export class HomeComponent {
-
-}
+export class HomeComponent {}
