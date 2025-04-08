@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
+import { UserCardComponent } from '@src/app/components/user-card/user-card.component';
 
 @Component({
   selector: 'app-bento-grid',
-  imports: [],
+  standalone: true,
+  imports: [UserCardComponent],
   templateUrl: './bento-grid.component.html',
-  styleUrl: './bento-grid.component.scss'
+  styleUrls: ['./bento-grid.component.scss'],
 })
-export class BentoGridComponent {
-
-}
+export class BentoGridComponent {}
