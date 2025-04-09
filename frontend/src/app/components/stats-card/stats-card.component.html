@@ -1,0 +1,23 @@
+<div class="stats-card rounded-2xl shadow-xl bg-white/80 backdrop-blur-sm p-6 w-full max-w-md transition hover:scale-[1.01] duration-300">
+    <h2 class="mb-4 text-xl font-bold text-gray-800">Statistiques 🧠</h2>
+
+    <div class="grid grid-cols-3 mb-4 text-center text-gray-700">
+        <div>
+            <p class="text-lg font-bold">{{ stats.relationsCount }}</p>
+            <p class="text-xs">Relations</p>
+        </div>
+        <div>
+            <p class="text-lg font-bold">{{ stats.eventsCount }}</p>
+            <p class="text-xs">Événements</p>
+        </div>
+        <div>
+            <p class="text-lg font-bold">{{ stats.averageNote || '–' }}</p>
+            <p class="text-xs">Note Moy.</p>
+        </div>
+    </div>
+
+    <div class="space-y-1 text-sm text-gray-600">
+        <p><strong>👤 Personne la + fréquente :</strong> {{ stats.mostFrequentPerson || '–' }}</p>
+        <p><strong>🎯 Type dominant :</strong> {{ stats.mostCommonEventType || '–' }}</p>
+    </div>
+</div>
