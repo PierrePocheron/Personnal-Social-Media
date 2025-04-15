@@ -1,0 +1,11 @@
+<div class="w-full p-4 shadow-xl rounded-2xl bg-white/70">
+    <h3 class="mb-2 text-lg font-semibold text-gray-700">🌐 Graphe de mes connexions</h3>
+
+    <div *ngIf="loading(); else graphContainer" class="w-full bg-gray-100 h-80 animate-pulse rounded-xl"></div>
+
+    <ng-template #graphContainer>
+        <div class="cy-container">
+            <div id="cy"></div>
+        </div>
+    </ng-template>
+</div>

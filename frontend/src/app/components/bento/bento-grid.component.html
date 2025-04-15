@@ -1,5 +1,5 @@
 <div class="grid w-full max-w-6xl grid-cols-1 gap-6 p-4 mx-auto md:grid-cols-2">
-    <!-- 🧍‍♂️ Colonne de gauche (Infos utilisateur) -->
+    <!-- 🧍‍♂️ Colonne gauche -->
     <div class="flex flex-col gap-6">
         <app-user-card *ngIf="user(); else userSkeleton" [user]="user()!" />
         <ng-template #userSkeleton>
@@ -12,10 +12,8 @@
         </ng-template>
     </div>
 
-    <!-- 📊 Colonne de droite (graphiques à venir) -->
+    <!-- 📊 Colonne droite -->
     <div class="flex flex-col gap-6">
-        <div class="flex items-center justify-center p-6 text-gray-400 shadow-xl rounded-2xl bg-white/70 h-96">
-            <p class="text-center">📈 Graphiques de relations, événements & lieux à venir…</p>
-        </div>
+        <app-life-graph-card />
     </div>
 </div>
