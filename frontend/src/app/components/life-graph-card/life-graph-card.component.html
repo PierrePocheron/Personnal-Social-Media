@@ -1,11 +1,50 @@
-<div class="w-full p-4 shadow-xl rounded-2xl bg-white/70">
-    <h3 class="mb-2 text-lg font-semibold text-gray-700">🌐 Graphe de mes connexions</h3>
+<div class="p-6 bg-white rounded-2xl shadow-xl w-full min-h-[400px]">
+  <!-- 🎛️ Filtres -->
+  <div class="flex flex-wrap gap-2 mb-4">
+    <button
+      class="px-3 py-1 text-sm transition border rounded"
+      [class.bg-indigo-500]="filters().person"
+      [class.text-white]="filters().person"
+      [class.border-indigo-500]="filters().person"
+      [class.text-indigo-500]="!filters().person"
+      (click)="toggleFilter('person')"
+    >
+      👤 Personnes
+    </button>
 
-    <div *ngIf="loading(); else graphContainer" class="w-full bg-gray-100 h-80 animate-pulse rounded-xl"></div>
+    <button
+      class="px-3 py-1 text-sm transition border rounded"
+      [class.bg-green-500]="filters().event"
+      [class.text-white]="filters().event"
+      [class.border-green-500]="filters().event"
+      [class.text-green-500]="!filters().event"
+      (click)="toggleFilter('event')"
+    >
+      📅 Événements
+    </button>
 
-    <ng-template #graphContainer>
-        <div class="cy-container">
-            <div id="cy"></div>
-        </div>
-    </ng-template>
+    <button
+      class="px-3 py-1 text-sm transition border rounded"
+      [class.bg-pink-500]="filters().place"
+      [class.text-white]="filters().place"
+      [class.border-pink-500]="filters().place"
+      [class.text-pink-500]="!filters().place"
+      (click)="toggleFilter('place')"
+    >
+      📍 Lieux
+    </button>
+  </div>
+
+  <!-- 📈 Graphe -->
+  <div
+    id="cy"
+    class="w-full h-[320px] bg-slate-50 rounded"
+    *ngIf="!loading()"
+  ></div>
+  <div
+    *ngIf="loading()"
+    class="w-full h-[320px] bg-gray-200 animate-pulse rounded flex items-center justify-center text-gray-500"
+  >
+    Chargement du graphe...
+  </div>
 </div>

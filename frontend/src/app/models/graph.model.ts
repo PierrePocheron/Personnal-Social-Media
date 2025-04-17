@@ -1,7 +1,8 @@
 export interface GraphNode {
   id: string;
   label: string;
-  type: 'person' | 'event' | 'relation' | 'place';
+  type: 'person' | 'event' | 'place';
+  color?: string;
 }
 
 export interface GraphEdge {
