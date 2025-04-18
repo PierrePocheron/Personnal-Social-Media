@@ -1,19 +1,16 @@
-<div class="p-6 bg-white rounded-2xl shadow-xl w-full min-h-[400px]">
+<div class="p-6 bg-white rounded-2xl shadow-xl w-full min-h-[400px] relative">
     <!-- 🎛️ Filtres -->
     <div class="flex flex-wrap gap-2 mb-4">
-        <!-- 👤 Personnes -->
         <button type="button" class="px-3 py-1 text-sm font-medium transition border rounded" [class.bg-indigo-500]="filters().person" [class.text-white]="filters().person" [class.border-indigo-500]="filters().person" [class.text-indigo-500]="!filters().person"
             [class.border-indigo-500]="!filters().person" (click)="toggleFilter('person')">
         👤 Personnes
       </button>
 
-        <!-- 📅 Événements -->
         <button type="button" class="px-3 py-1 text-sm font-medium transition border rounded" [class.bg-green-500]="filters().event" [class.text-white]="filters().event" [class.border-green-500]="filters().event" [class.text-green-500]="!filters().event" [class.border-green-500]="!filters().event"
             (click)="toggleFilter('event')">
         📅 Événements
       </button>
 
-        <!-- 📍 Lieux -->
         <button type="button" class="px-3 py-1 text-sm font-medium transition border rounded" [class.bg-pink-500]="filters().place" [class.text-white]="filters().place" [class.border-pink-500]="filters().place" [class.text-pink-500]="!filters().place" [class.border-pink-500]="!filters().place"
             (click)="toggleFilter('place')">
         📍 Lieux
@@ -22,6 +19,17 @@
 
     <!-- 📈 Graphe -->
     <div id="cy" class="w-full h-[480px] sm:h-[600px] bg-slate-50 rounded transition-all duration-300" *ngIf="!loading()"></div>
+
+    <!-- 🧠 Infobox dynamique -->
+    <div *ngIf="hoveredNode()" class="absolute px-4 py-3 text-sm text-gray-800 bg-white border border-gray-200 shadow-md top-6 right-6 rounded-xl w-60">
+        <div class="mb-1 text-base font-semibold text-gray-900">
+            {{ hoveredNode()?.label }}
+        </div>
+        <div class="text-xs">
+            🧩 Type : <span class="capitalize">{{ hoveredNode()?.type }}</span>
+        </div>
+        <div class="w-full h-1 mt-1 rounded-full" [style.backgroundColor]="hoveredNode()?.color"></div>
+    </div>
 
     <!-- ⏳ Loading -->
     <div *ngIf="loading()" class="w-full h-[480px] sm:h-[600px] bg-gray-200 animate-pulse rounded flex items-center justify-center text-gray-500">

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, Signal, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import cytoscape from 'cytoscape';
 import { HttpClient } from '@angular/common/http';
@@ -34,69 +34,68 @@ export class LifeGraphCardComponent implements OnInit {
   loading = signal(true);
   allNodes = signal<GraphNode[]>([]);
   allEdges = signal<GraphEdge[]>([]);
+  hoveredNode = signal<GraphNode | null>(null);
 
   ngOnInit(): void {
-    //this.http.get<any>('/api/me').subscribe({
     this.http.get<any>('http://localhost:8080/api/me').subscribe({
       next: (data) => {
         const nodes: GraphNode[] = [];
         const edges: GraphEdge[] = [];
 
-        const addNode = (id: string, label: string, type: GraphNode['type'], color: string) => {
+        const addNode = (id: string, label: string, type: GraphNode['type']) => {
+          const color =
+            type === 'person' ? '#6366f1' :
+            type === 'event' ? '#10b981' :
+            '#ec4899';
+
           if (!nodes.find((n) => n.id === id)) {
             nodes.push({ id, label, type, color });
           }
         };
 
         const addEdge = (source: string, target: string) => {
-          const alreadyExists = edges.some(
+          const exists = edges.some(
             (e) => (e.source === source && e.target === target) || (e.source === target && e.target === source)
           );
-          if (!alreadyExists && source !== target) {
-            edges.push({ source, target });
-          }
+          if (!exists && source !== target) edges.push({ source, target });
         };
 
-        // 👤 Utilisateur principal
-        addNode(data.id, data.nickname ?? `${data.firstName} ${data.lastName}`, 'person', 'indigo');
+        // 👤 Utilisateur
+        addNode(data.id, data.nickname ?? `${data.firstName} ${data.lastName}`, 'person');
 
         // 👥 Relations
         data.relations.forEach((rel: any) => {
           const p = rel.target;
-          addNode(p.id, p.nickname ?? `${p.firstName} ${p.lastName}`, 'person', 'indigo');
+          addNode(p.id, p.nickname ?? `${p.firstName} ${p.lastName}`, 'person');
           addEdge(data.id, p.id);
 
-          // 🔄 Connexions secondaires
           p.participations?.forEach((part: any) => {
             const ev = part.event;
-            addNode(ev.id, ev.title, 'event', 'green');
+            addNode(ev.id, ev.title, 'event');
             addEdge(p.id, ev.id);
           });
 
           p.places?.forEach((place: any) => {
-            addNode(place.id, place.name, 'place', 'pink');
+            addNode(place.id, place.name, 'place');
             addEdge(p.id, place.id);
           });
         });
 
-        // 🧍‍♂️ Utilisateur → événements
+        // 🧍‍♂️ Événements + lieux
         data.participations?.forEach((part: any) => {
           const ev = part.event;
-          addNode(ev.id, ev.title, 'event', 'green');
+          addNode(ev.id, ev.title, 'event');
           addEdge(data.id, ev.id);
         });
 
-        // 🧍‍♂️ Utilisateur → lieux
         data.places?.forEach((place: any) => {
-          addNode(place.id, place.name, 'place', 'pink');
+          addNode(place.id, place.name, 'place');
           addEdge(data.id, place.id);
         });
 
         this.allNodes.set(nodes);
         this.allEdges.set(edges);
         this.loading.set(false);
-
-        // ⏳ Attendre que le DOM ait rendu le div#cy
         setTimeout(() => this.renderGraph(), 0);
       },
       error: (err) => {
@@ -106,27 +105,20 @@ export class LifeGraphCardComponent implements OnInit {
     });
   }
 
-  toggleFilter(type: keyof ReturnType<typeof this.filters>): void {
+  toggleFilter(type: keyof ReturnType<typeof this.filters>) {
     const current = this.filters();
     this.filters.set({ ...current, [type]: !current[type] });
-
-    // ⏳ Attendre le DOM complet pour éviter le null
     setTimeout(() => this.renderGraph(), 0);
   }
 
   private renderGraph() {
     const cyContainer = document.getElementById('cy');
-    if (!cyContainer) {
-      console.warn('⚠️ Élement #cy introuvable, attente DOM');
-      return;
-    }
+    if (!cyContainer) return;
 
-    const activeFilters = this.filters();
-    const visibleNodes = this.allNodes().filter((n) => activeFilters[n.type]);
-    const visibleNodeIds = visibleNodes.map((n) => n.id);
-    const visibleEdges = this.allEdges().filter(
-      (e) => visibleNodeIds.includes(e.source) && visibleNodeIds.includes(e.target)
-    );
+    const filters = this.filters();
+    const visibleNodes = this.allNodes().filter((n) => filters[n.type]);
+    const nodeIds = visibleNodes.map((n) => n.id);
+    const visibleEdges = this.allEdges().filter((e) => nodeIds.includes(e.source) && nodeIds.includes(e.target));
 
     const elements = [
       ...visibleNodes.map((n) => ({
@@ -146,19 +138,34 @@ export class LifeGraphCardComponent implements OnInit {
       })),
     ];
 
-    cytoscape({
+    const cy = cytoscape({
       container: cyContainer,
       elements,
       style: [
         {
           selector: 'node',
           style: {
+            width: 48,
+            height: 48,
             'background-color': 'data(color)',
             label: 'data(label)',
+            'text-wrap': 'wrap',
+            'text-max-width': '80',
+            'font-size': '11px',
             color: '#fff',
             'text-valign': 'center',
             'text-halign': 'center',
-            'font-size': '12px',
+            'transition-property': 'background-color, width, height',
+            'transition-duration': 200,
+          },
+        },
+        {
+          selector: 'node:hover',
+          style: {
+            width: 60,
+            height: 60,
+            'background-color': '#1e293b',
+            'z-index': 9999,
           },
         },
         {
@@ -176,6 +183,21 @@ export class LifeGraphCardComponent implements OnInit {
         name: 'cose',
         animate: true,
       },
+    });
+
+    cy.on('mouseover', 'node', (event) => {
+      const node = event.target;
+      const data = node.data();
+      this.hoveredNode.set({
+        id: data.id,
+        label: data.label,
+        type: data.type,
+        color: data.color,
+      });
+    });
+
+    cy.on('mouseout', 'node', () => {
+      this.hoveredNode.set(null);
     });
   }
 }
