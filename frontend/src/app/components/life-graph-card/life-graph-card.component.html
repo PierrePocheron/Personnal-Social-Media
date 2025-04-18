@@ -5,12 +5,10 @@
             [class.border-indigo-500]="!filters().person" (click)="toggleFilter('person')">
         👤 Personnes
       </button>
-
         <button type="button" class="px-3 py-1 text-sm font-medium transition border rounded" [class.bg-green-500]="filters().event" [class.text-white]="filters().event" [class.border-green-500]="filters().event" [class.text-green-500]="!filters().event" [class.border-green-500]="!filters().event"
             (click)="toggleFilter('event')">
         📅 Événements
       </button>
-
         <button type="button" class="px-3 py-1 text-sm font-medium transition border rounded" [class.bg-pink-500]="filters().place" [class.text-white]="filters().place" [class.border-pink-500]="filters().place" [class.text-pink-500]="!filters().place" [class.border-pink-500]="!filters().place"
             (click)="toggleFilter('place')">
         📍 Lieux
@@ -18,7 +16,7 @@
     </div>
 
     <!-- 📈 Graphe -->
-    <div id="cy" class="w-full h-[480px] sm:h-[600px] bg-slate-50 rounded transition-all duration-300" *ngIf="!loading()"></div>
+    <div id="cy" class="w-full h-[600px] sm:h-[720px] bg-slate-50 rounded transition-all duration-300" *ngIf="!loading()"></div>
 
     <!-- 🧠 Infobox dynamique -->
     <div *ngIf="hoveredNode()" class="absolute px-4 py-3 text-sm text-gray-800 bg-white border border-gray-200 shadow-md top-6 right-6 rounded-xl w-60">
@@ -32,7 +30,7 @@
     </div>
 
     <!-- ⏳ Loading -->
-    <div *ngIf="loading()" class="w-full h-[480px] sm:h-[600px] bg-gray-200 animate-pulse rounded flex items-center justify-center text-gray-500">
+    <div *ngIf="loading()" class="w-full h-[600px] sm:h-[720px] bg-gray-200 animate-pulse rounded flex items-center justify-center text-gray-500">
         Chargement du graphe...
     </div>
 </div>

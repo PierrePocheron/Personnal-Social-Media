@@ -1,18 +1,21 @@
-<div class="grid w-full max-w-6xl grid-cols-1 gap-6 p-4 mx-auto md:grid-cols-2">
+<div class="grid w-full max-w-7xl grid-cols-1 gap-6 mx-auto lg:grid-cols-[360px_1fr]">
     <!-- 🧍‍♂️ Colonne gauche -->
     <div class="flex flex-col gap-6">
         <app-user-card *ngIf="user(); else userSkeleton" [user]="user()!" />
         <ng-template #userSkeleton>
-            <div class="p-6 shadow-xl animate-pulse rounded-2xl bg-white/60 h-52"></div>
+            <div class="shadow-xl animate-pulse rounded-2xl bg-white/60 h-52"></div>
         </ng-template>
 
         <app-stats-card *ngIf="stats(); else statsSkeleton" [stats]="stats()!" />
         <ng-template #statsSkeleton>
-            <div class="h-40 p-6 shadow-xl animate-pulse rounded-2xl bg-white/60"></div>
+            <div class="h-40 shadow-xl animate-pulse rounded-2xl bg-white/60"></div>
         </ng-template>
+
+        <!-- 🔜 Future 3e tuile possible -->
+        <!-- <app-something-card /> -->
     </div>
 
-    <!-- 📊 Colonne droite -->
+    <!-- 📊 Colonne droite (graph pleine largeur restante) -->
     <div class="flex flex-col gap-6">
         <app-life-graph-card />
     </div>

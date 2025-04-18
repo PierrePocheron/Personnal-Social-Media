@@ -60,19 +60,16 @@ export class LifeGraphCardComponent implements OnInit {
           if (!exists && source !== target) edges.push({ source, target });
         };
 
-        // 👤 Utilisateur
         addNode(data.id, data.nickname ?? `${data.firstName} ${data.lastName}`, 'person');
 
-        // 👥 Relations
         data.relations.forEach((rel: any) => {
           const p = rel.target;
           addNode(p.id, p.nickname ?? `${p.firstName} ${p.lastName}`, 'person');
           addEdge(data.id, p.id);
 
           p.participations?.forEach((part: any) => {
-            const ev = part.event;
-            addNode(ev.id, ev.title, 'event');
-            addEdge(p.id, ev.id);
+            addNode(part.event.id, part.event.title, 'event');
+            addEdge(p.id, part.event.id);
           });
 
           p.places?.forEach((place: any) => {
@@ -81,11 +78,9 @@ export class LifeGraphCardComponent implements OnInit {
           });
         });
 
-        // 🧍‍♂️ Événements + lieux
         data.participations?.forEach((part: any) => {
-          const ev = part.event;
-          addNode(ev.id, ev.title, 'event');
-          addEdge(data.id, ev.id);
+          addNode(part.event.id, part.event.title, 'event');
+          addEdge(data.id, part.event.id);
         });
 
         data.places?.forEach((place: any) => {
@@ -145,8 +140,8 @@ export class LifeGraphCardComponent implements OnInit {
         {
           selector: 'node',
           style: {
-            width: 48,
-            height: 48,
+            width: 56,
+            height: 56,
             'background-color': 'data(color)',
             label: 'data(label)',
             'text-wrap': 'wrap',
@@ -162,8 +157,8 @@ export class LifeGraphCardComponent implements OnInit {
         {
           selector: 'node:hover',
           style: {
-            width: 60,
-            height: 60,
+            width: 68,
+            height: 68,
             'background-color': '#1e293b',
             'z-index': 9999,
           },
