@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AddPersonFormComponent } from './forms/add-person-form/add-person-form.component';
 import { AddRelationFormComponent } from './forms/add-relation-form/add-relation-form.component';
@@ -18,4 +18,7 @@ import { AddPlaceFormComponent } from './forms/add-place-form/add-place-form.com
   templateUrl: './add-data-card.component.html',
   styleUrls: ['./add-data-card.component.scss'],
 })
-export class AddDataCardComponent {}
+export class AddDataCardComponent {
+  activeForm = signal<'person' | 'relation' | 'event' | 'place'>('person');
+
+}

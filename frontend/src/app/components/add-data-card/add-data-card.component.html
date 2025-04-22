@@ -1,10 +1,18 @@
 <div class="w-full p-6 bg-white shadow-xl rounded-2xl">
     <h2 class="mb-4 text-lg font-semibold">➕ Ajouter des données</h2>
 
-    <div class="space-y-6">
-        <app-add-person-form />
-        <app-add-relation-form />
-        <app-add-event-form />
-        <app-add-place-form />
+    <!-- 🔘 Boutons de sélection -->
+    <div class="flex flex-wrap gap-2 mb-4">
+        <button (click)="activeForm.set('person')" class="btn-filter" [class.active]="activeForm() === 'person'">👤 Personne</button>
+        <button (click)="activeForm.set('relation')" class="btn-filter" [class.active]="activeForm() === 'relation'">🤝 Relation</button>
+        <button (click)="activeForm.set('event')" class="btn-filter" [class.active]="activeForm() === 'event'">📅 Événement</button>
+        <button (click)="activeForm.set('place')" class="btn-filter" [class.active]="activeForm() === 'place'">📍 Lieu</button>
     </div>
+
+    <!-- 📦 Formulaires dynamiques -->
+    <app-add-person-form *ngIf="activeForm() === 'person'" />
+    <app-add-relation-form *ngIf="activeForm() === 'relation'" />
+    <app-add-event-form *ngIf="activeForm() === 'event'" />
+    <app-add-place-form *ngIf="activeForm() === 'place'" />
+
 </div>
