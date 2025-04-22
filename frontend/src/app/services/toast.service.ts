@@ -1,12 +1,25 @@
 import { Injectable } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class ToastService {
-  success(message: string) {
-    alert('✅ ' + message); // 💡 Remplace par une vraie lib plus tard
+  constructor(private toastr: ToastrService) {}
+
+  success(message: string, title: string = 'Succès') {
+    this.toastr.success(message, title);
   }
 
-  error(message: string) {
-    alert('❌ ' + message);
+  error(message: string, title: string = 'Erreur') {
+    this.toastr.error(message, title);
+  }
+
+  info(message: string, title: string = 'Info') {
+    this.toastr.info(message, title);
+  }
+
+  warning(message: string, title: string = 'Attention') {
+    this.toastr.warning(message, title);
   }
 }
