@@ -8,6 +8,7 @@ type GraphNode = {
   label: string;
   type: 'person' | 'event' | 'place';
   color: string;
+  meta?: any;
 };
 
 type GraphEdge = {
@@ -42,14 +43,14 @@ export class LifeGraphCardComponent implements OnInit {
         const nodes: GraphNode[] = [];
         const edges: GraphEdge[] = [];
 
-        const addNode = (id: string, label: string, type: GraphNode['type']) => {
+        const addNode = (id: string, label: string, type: GraphNode['type'], meta: any = {}) => {
           const color =
             type === 'person' ? '#6366f1' :
             type === 'event' ? '#10b981' :
             '#ec4899';
 
           if (!nodes.find((n) => n.id === id)) {
-            nodes.push({ id, label, type, color });
+            nodes.push({ id, label, type, color, meta });
           }
         };
 
@@ -60,31 +61,95 @@ export class LifeGraphCardComponent implements OnInit {
           if (!exists && source !== target) edges.push({ source, target });
         };
 
-        addNode(data.id, data.nickname ?? `${data.firstName} ${data.lastName}`, 'person');
+        // 👤 Moi (utilisateur principal)
+        addNode(
+          data.id,
+          data.nickname ?? `${data.firstName} ${data.lastName}`,
+          'person',
+          {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            nickname: data.nickname,
+            job: data.job,
+          }
+        );
 
+        // 👥 Relations et connexions secondaires
         data.relations.forEach((rel: any) => {
           const p = rel.target;
-          addNode(p.id, p.nickname ?? `${p.firstName} ${p.lastName}`, 'person');
+
+          // 👤 Personne
+          addNode(
+            p.id,
+            p.nickname ?? `${p.firstName} ${p.lastName}`,
+            'person',
+            {
+              firstName: p.firstName,
+              lastName: p.lastName,
+              nickname: p.nickname,
+              job: p.job,
+            }
+          );
           addEdge(data.id, p.id);
 
+          // 📅 Participations → événements
           p.participations?.forEach((part: any) => {
-            addNode(part.event.id, part.event.title, 'event');
-            addEdge(p.id, part.event.id);
+            const ev = part.event;
+            addNode(
+              ev.id,
+              ev.title,
+              'event',
+              {
+                title: ev.title,
+                date: ev.date,
+                averageRating: ev.averageRating,
+              }
+            );
+            addEdge(p.id, ev.id);
           });
 
+          // 📍 Lieux fréquentés
           p.places?.forEach((place: any) => {
-            addNode(place.id, place.name, 'place');
+            addNode(
+              place.id,
+              place.name,
+              'place',
+              {
+                name: place.name,
+                categories: place.categories ?? [],
+              }
+            );
             addEdge(p.id, place.id);
           });
         });
 
+        // 📅 Mes participations
         data.participations?.forEach((part: any) => {
-          addNode(part.event.id, part.event.title, 'event');
-          addEdge(data.id, part.event.id);
+          const ev = part.event;
+          addNode(
+            ev.id,
+            ev.title,
+            'event',
+            {
+              title: ev.title,
+              date: ev.date,
+              averageRating: ev.averageRating,
+            }
+          );
+          addEdge(data.id, ev.id);
         });
 
+        // 📍 Mes lieux
         data.places?.forEach((place: any) => {
-          addNode(place.id, place.name, 'place');
+          addNode(
+            place.id,
+            place.name,
+            'place',
+            {
+              name: place.name,
+              categories: place.categories ?? [],
+            }
+          );
           addEdge(data.id, place.id);
         });
 
@@ -99,6 +164,7 @@ export class LifeGraphCardComponent implements OnInit {
       },
     });
   }
+
 
   toggleFilter(type: keyof ReturnType<typeof this.filters>) {
     const current = this.filters();
@@ -180,19 +246,19 @@ export class LifeGraphCardComponent implements OnInit {
       },
     });
 
+    // 🧠 Gestion du survol avec recherche via allNodes (pour garder meta)
     cy.on('mouseover', 'node', (event) => {
-      const node = event.target;
-      const data = node.data();
-      this.hoveredNode.set({
-        id: data.id,
-        label: data.label,
-        type: data.type,
-        color: data.color,
-      });
+      const nodeId = event.target.id();
+      const found = this.allNodes().find((n) => n.id === nodeId);
+      if (found) {
+        this.hoveredNode.set(found);
+      }
     });
 
     cy.on('mouseout', 'node', () => {
       this.hoveredNode.set(null);
     });
+
   }
+
 }
