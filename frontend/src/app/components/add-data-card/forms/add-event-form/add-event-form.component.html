@@ -1,1 +1,52 @@
-<p>add-event-form works!</p>
+<form (ngSubmit)="submit()" class="flex flex-col gap-4">
+  <input
+    [(ngModel)]="title"
+    name="title"
+    type="text"
+    placeholder="Titre *"
+    class="form-input"
+    required
+  />
+  <input
+    [(ngModel)]="type"
+    name="type"
+    type="text"
+    placeholder="Type (ex: soirée)"
+    class="form-input"
+  />
+  <input
+    [(ngModel)]="location"
+    name="location"
+    type="text"
+    placeholder="Lieu (ex: Paris 11e)"
+    class="form-input"
+  />
+  <textarea
+    [(ngModel)]="description"
+    name="description"
+    placeholder="Description"
+    rows="2"
+    class="form-textarea"
+  ></textarea>
+  <input
+    [(ngModel)]="startDate"
+    name="startDate"
+    type="date"
+    class="form-input"
+    required
+  />
+  <input
+    [(ngModel)]="endDate"
+    name="endDate"
+    type="date"
+    class="form-input"
+    required
+  />
+
+  <button
+    type="submit"
+    class="px-4 py-2 font-medium text-white transition bg-green-600 rounded hover:bg-green-700"
+  >
+    ➕ Ajouter l'événement
+  </button>
+</form>

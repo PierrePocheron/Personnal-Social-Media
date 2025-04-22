@@ -1,42 +1,38 @@
-// 📁 src/app/components/add-data-card/forms/add-person-form.component.ts
-
 import { Component, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ToastService } from '@app/services/toast.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-add-person-form',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  template: `
-    <form (ngSubmit)="submit()" class="flex flex-col gap-3">
-      <label>
-        👤 Prénom :
-        <input [(ngModel)]="firstName" name="firstName" required class="input" />
-      </label>
-      <label>
-        👤 Nom :
-        <input [(ngModel)]="lastName" name="lastName" required class="input" />
-      </label>
-      <button type="submit" class="btn">➕ Ajouter la personne</button>
-    </form>
-  `,
+  templateUrl: './add-person-form.component.html',
+  styleUrls: ['./add-person-form.component.scss'],
+  imports: [CommonModule, FormsModule], 
 })
 export class AddPersonFormComponent {
   private http = inject(HttpClient);
+  private toast = inject(ToastService);
 
   firstName = '';
   lastName = '';
+  loading = false;
 
   submit() {
+    if (!this.firstName.trim() || !this.lastName.trim()) return;
+
+    this.loading = true;
     this.http.post('http://localhost:8080/api/persons', {
       firstName: this.firstName,
       lastName: this.lastName,
-    }).subscribe(() => {
-      alert('✅ Personne ajoutée !');
-      this.firstName = '';
-      this.lastName = '';
+    }).subscribe({
+      next: () => {
+        this.toast.success('✅ Personne ajoutée !');
+        this.firstName = '';
+        this.lastName = '';
+      },
+      error: () => this.toast.error('❌ Erreur lors de l’ajout'),
+      complete: () => this.loading = false,
     });
   }
 }

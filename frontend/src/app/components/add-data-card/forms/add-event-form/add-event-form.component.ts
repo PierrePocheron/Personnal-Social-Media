@@ -1,65 +1,60 @@
-// 📁 src/app/components/add-data-card/forms/add-event-form.component.ts
-
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { Component, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { HttpClient } from "@angular/common/http";
+import { ToastService } from "@app/services/toast.service";
 
 @Component({
-  selector: 'app-add-event-form',
+  selector: "app-add-event-form",
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-    <form (ngSubmit)="submit()" class="flex flex-col gap-3">
-      <label>
-        📝 Titre :
-        <input [(ngModel)]="title" name="title" required class="input" />
-      </label>
-      <label>
-        📅 Type :
-        <input [(ngModel)]="type" name="type" required class="input" />
-      </label>
-      <label>
-        📍 Lieu :
-        <input [(ngModel)]="location" name="location" class="input" />
-      </label>
-      <label>
-        🧾 Description :
-        <textarea [(ngModel)]="description" name="description" class="input"></textarea>
-      </label>
-      <label>
-        📆 Date :
-        <input type="date" [(ngModel)]="date" name="date" required class="input" />
-      </label>
-      <button type="submit" class="btn">➕ Ajouter l'événement</button>
-    </form>
-  `,
+  templateUrl: "./add-event-form.component.html",
+  styleUrls: ["./add-event-form.component.scss"],
 })
 export class AddEventFormComponent {
   private http = inject(HttpClient);
+  private toast = inject(ToastService);
 
-  title = '';
-  type = '';
-  location = '';
-  description = '';
-  date = '';
+  title = "";
+  type = "";
+  location = "";
+  description = "";
+  startDate = "";
+  endDate = "";
 
   submit() {
-    this.http.post('http://localhost:8080/api/events', {
+    if (!this.title || !this.startDate || !this.endDate) {
+      this.toast.error("Les champs obligatoires doivent être remplis");
+      return;
+    }
+
+    const payload = {
       title: this.title,
       type: this.type,
       location: this.location,
       description: this.description,
-      startDate: this.date,
-      endDate: this.date,
+      startDate: this.startDate,
+      endDate: this.endDate,
       participants: [],
-    }).subscribe(() => {
-      alert('✅ Événement ajouté !');
-      this.title = '';
-      this.type = '';
-      this.location = '';
-      this.description = '';
-      this.date = '';
+    };
+
+    this.http.post("http://localhost:8080/api/events", payload).subscribe({
+      next: () => {
+        this.toast.success("✅ Événement ajouté avec succès");
+        this.resetForm();
+      },
+      error: () => {
+        this.toast.error("❌ Une erreur est survenue lors de l’ajout");
+      },
     });
+  }
+
+  resetForm() {
+    this.title = "";
+    this.type = "";
+    this.location = "";
+    this.description = "";
+    this.startDate = "";
+    this.endDate = "";
   }
 }

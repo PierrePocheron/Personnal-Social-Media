@@ -1,1 +1,15 @@
-<p>add-person-form works!</p>
+<form (ngSubmit)="submit()" class="form">
+    <label>
+    Prénom *
+    <input [(ngModel)]="firstName" name="firstName" required />
+  </label>
+
+    <label>
+    Nom *
+    <input [(ngModel)]="lastName" name="lastName" required />
+  </label>
+
+    <button type="submit" [disabled]="loading || !firstName || !lastName">
+    {{ loading ? 'Ajout en cours...' : '➕ Ajouter la personne' }}
+  </button>
+</form>

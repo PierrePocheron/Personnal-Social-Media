@@ -1,56 +1,60 @@
-// 📁 src/app/components/add-data-card/forms/add-relation-form.component.ts
-
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ToastService } from '@app/services/toast.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+
+
+interface Person {
+  id: string;
+  firstName: string;
+  lastName: string;
+}
 
 @Component({
   selector: 'app-add-relation-form',
-  standalone: true,
+  templateUrl: './add-relation-form.component.html',
+  styleUrls: ['./add-relation-form.component.scss'],
   imports: [CommonModule, FormsModule],
-  template: `
-    <form (ngSubmit)="submit()" class="flex flex-col gap-3">
-      <label>
-        🧍 Source ID :
-        <input [(ngModel)]="source" name="source" required class="input" />
-      </label>
-      <label>
-        🧍 Cible ID :
-        <input [(ngModel)]="target" name="target" required class="input" />
-      </label>
-      <label>
-        🧩 Type de relation :
-        <input [(ngModel)]="type" name="type" required class="input" />
-      </label>
-      <label>
-        🗣️ Contexte :
-        <input [(ngModel)]="context" name="context" class="input" />
-      </label>
-      <button type="submit" class="btn">➕ Ajouter la relation</button>
-    </form>
-  `,
 })
-export class AddRelationFormComponent {
+export class AddRelationFormComponent implements OnInit {
   private http = inject(HttpClient);
+  private toast = inject(ToastService);
 
-  source = '';
-  target = '';
+  persons: Person[] = [];
+  sourceId = '';
+  targetId = '';
   type = '';
   context = '';
+  loading = false;
+
+  ngOnInit() {
+    this.http.get<Person[]>('http://localhost:8080/api/persons')
+      .subscribe({
+        next: (data) => this.persons = data,
+        error: () => this.toast.error('❌ Erreur lors du chargement des personnes'),
+      });
+  }
 
   submit() {
+    if (!this.sourceId || !this.targetId || !this.type.trim()) return;
+
+    this.loading = true;
     this.http.post('http://localhost:8080/api/relations', {
-      sourcePersonId: this.source,
-      targetPersonId: this.target,
+      sourcePersonId: this.sourceId,
+      targetPersonId: this.targetId,
       type: this.type,
       context: this.context,
-    }).subscribe(() => {
-      alert('✅ Relation ajoutée !');
-      this.source = '';
-      this.target = '';
-      this.type = '';
-      this.context = '';
+    }).subscribe({
+      next: () => {
+        this.toast.success('✅ Relation ajoutée !');
+        this.sourceId = '';
+        this.targetId = '';
+        this.type = '';
+        this.context = '';
+      },
+      error: () => this.toast.error('❌ Erreur lors de l’ajout'),
+      complete: () => this.loading = false,
     });
   }
 }

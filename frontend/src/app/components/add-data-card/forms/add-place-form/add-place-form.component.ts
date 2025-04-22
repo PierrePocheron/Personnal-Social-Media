@@ -1,44 +1,48 @@
-// 📁 src/app/components/add-data-card/forms/add-place-form.component.ts
-
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { ToastService } from '@app/services/toast.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-add-place-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  template: `
-    <form (ngSubmit)="submit()" class="flex flex-col gap-3">
-      <label>
-        🏠 Nom du lieu :
-        <input [(ngModel)]="name" name="name" required class="input" />
-      </label>
-      <label>
-        🏷️ Catégories (séparées par des virgules) :
-        <input [(ngModel)]="categories" name="categories" class="input" />
-      </label>
-      <button type="submit" class="btn">➕ Ajouter le lieu</button>
-    </form>
-  `,
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  templateUrl: './add-place-form.component.html',
 })
 export class AddPlaceFormComponent {
+  private fb = inject(FormBuilder);
   private http = inject(HttpClient);
+  private toast = inject(ToastService);
 
-  name = '';
-  categories = '';
+  form: FormGroup = this.fb.group({
+    name: ['', Validators.required],
+    categories: [''],
+  });
 
-  submit() {
-    const catArray = this.categories.split(',').map(c => c.trim()).filter(Boolean);
+  onSubmit() {
+    if (this.form.invalid) {
+      this.toast.error('Le formulaire est invalide.');
+      return;
+    }
 
-    this.http.post('http://localhost:8080/api/places', {
-      name: this.name,
-      categories: catArray,
-    }).subscribe(() => {
-      alert('✅ Lieu ajouté !');
-      this.name = '';
-      this.categories = '';
+    const payload = {
+      name: this.form.value.name,
+      categories: this.form.value.categories
+        .split(',')
+        .map((c: string) => c.trim())
+        .filter((c: string) => !!c),
+    };
+
+    this.http.post('/api/places', payload).subscribe({
+      next: () => {
+        this.toast.success('📍 Lieu ajouté avec succès !');
+        this.form.reset();
+      },
+      error: () => {
+        this.toast.error('Erreur lors de l’ajout du lieu.');
+      },
     });
   }
 }

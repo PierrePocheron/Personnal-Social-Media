@@ -1,1 +1,35 @@
-<p>add-relation-form works!</p>
+<form (ngSubmit)="submit()" class="form">
+  <label>
+    Source *
+    <select [(ngModel)]="sourceId" name="sourceId" required>
+      <option value="" disabled selected>-- Sélectionner --</option>
+      <option *ngFor="let person of persons" [value]="person.id">
+        {{ person.firstName }} {{ person.lastName }}
+      </option>
+    </select>
+  </label>
+
+  <label>
+    Cible *
+    <select [(ngModel)]="targetId" name="targetId" required>
+      <option value="" disabled selected>-- Sélectionner --</option>
+      <option *ngFor="let person of persons" [value]="person.id">
+        {{ person.firstName }} {{ person.lastName }}
+      </option>
+    </select>
+  </label>
+
+  <label>
+    Type de relation *
+    <input [(ngModel)]="type" name="type" required />
+  </label>
+
+  <label>
+    Contexte
+    <input [(ngModel)]="context" name="context" />
+  </label>
+
+  <button type="submit" [disabled]="loading || !sourceId || !targetId || !type">
+    {{ loading ? "Ajout en cours..." : "➕ Ajouter la relation" }}
+  </button>
+</form>
