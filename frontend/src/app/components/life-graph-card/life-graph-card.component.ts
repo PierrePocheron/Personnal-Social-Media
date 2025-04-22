@@ -43,16 +43,24 @@ export class LifeGraphCardComponent implements OnInit {
         const nodes: GraphNode[] = [];
         const edges: GraphEdge[] = [];
 
-        const addNode = (id: string, label: string, type: GraphNode['type'], meta: any = {}) => {
-          const color =
-            type === 'person' ? '#6366f1' :
-            type === 'event' ? '#10b981' :
-            '#ec4899';
+        const getColor = (type: GraphNode['type']) =>
+          type === 'person' ? 'indigo' :
+          type === 'event' ? 'green' :
+          type === 'place' ? 'blue' :
+          '#ec4899';
 
+        const addNode = (
+          id: string,
+          label: string,
+          type: GraphNode['type'],
+          meta: any = {}
+        ) => {
+          const color = getColor(type);
           if (!nodes.find((n) => n.id === id)) {
             nodes.push({ id, label, type, color, meta });
           }
         };
+
 
         const addEdge = (source: string, target: string) => {
           const exists = edges.some(
@@ -179,7 +187,9 @@ export class LifeGraphCardComponent implements OnInit {
     const filters = this.filters();
     const visibleNodes = this.allNodes().filter((n) => filters[n.type]);
     const nodeIds = visibleNodes.map((n) => n.id);
-    const visibleEdges = this.allEdges().filter((e) => nodeIds.includes(e.source) && nodeIds.includes(e.target));
+    const visibleEdges = this.allEdges().filter((e) =>
+      nodeIds.includes(e.source) && nodeIds.includes(e.target)
+    );
 
     const elements = [
       ...visibleNodes.map((n) => ({
@@ -187,7 +197,7 @@ export class LifeGraphCardComponent implements OnInit {
           id: n.id,
           label: n.label,
           type: n.type,
-          color: n.color,
+          color: n.color, // ✅ bien dans data
         },
       })),
       ...visibleEdges.map((e) => ({
@@ -208,7 +218,16 @@ export class LifeGraphCardComponent implements OnInit {
           style: {
             width: 56,
             height: 56,
-            'background-color': 'data(color)',
+            'background-color': 'data(color)', // ✅ affichage de la couleur
+            'border-width': 3,
+            'border-color': (ele: any) => {
+              const type = ele.data('type');
+              return type === 'person'
+                ? '#6366f1'
+                : type === 'event'
+                ? '#10b981'
+                : '#ec4899';
+            },
             label: 'data(label)',
             'text-wrap': 'wrap',
             'text-max-width': '80',
@@ -246,7 +265,6 @@ export class LifeGraphCardComponent implements OnInit {
       },
     });
 
-    // 🧠 Gestion du survol avec recherche via allNodes (pour garder meta)
     cy.on('mouseover', 'node', (event) => {
       const nodeId = event.target.id();
       const found = this.allNodes().find((n) => n.id === nodeId);
@@ -258,7 +276,7 @@ export class LifeGraphCardComponent implements OnInit {
     cy.on('mouseout', 'node', () => {
       this.hoveredNode.set(null);
     });
-
   }
+
 
 }
