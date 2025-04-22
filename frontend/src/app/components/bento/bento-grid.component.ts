@@ -7,11 +7,12 @@ import { PersonService } from '@app/services/person.service';
 import { StatsService } from '@app/services/stats.service';
 import { Person } from '@app/models/person.model';
 import { MeStats } from '@app/models/me-stats.model';
+import { AddDataCardComponent } from '@app/components/add-data-card/add-data-card.component';
 
 @Component({
   selector: 'app-bento-grid',
   standalone: true,
-  imports: [CommonModule, UserCardComponent, StatsCardComponent, LifeGraphCardComponent],
+  imports: [CommonModule, UserCardComponent, StatsCardComponent, LifeGraphCardComponent, AddDataCardComponent],
   templateUrl: './bento-grid.component.html',
   styleUrls: ['./bento-grid.component.scss'],
 })
