@@ -1,13 +1,21 @@
 <form (ngSubmit)="submit()" class="form">
-    <label>
-    Prénom *
+    <label> Prénom *
     <input [(ngModel)]="firstName" name="firstName" required />
   </label>
 
-    <label>
-    Nom *
-    <input [(ngModel)]="lastName" name="lastName" required />
-  </label>
+    <label> Nom *
+      <input [(ngModel)]="lastName" name="lastName" required />
+    </label>
+
+    <label> Surnom
+      <input [(ngModel)]="nickname" name="nickname" placeholder="Surnom (optionnel)" class="form-input" />
+    </label>
+
+    <label> Profession
+      <input [(ngModel)]="job" name="job" placeholder="Profession (optionnel)" class="form-input" />
+    </label>
+
+
 
     <button type="submit" [disabled]="loading || !firstName || !lastName">
     {{ loading ? 'Ajout en cours...' : '➕ Ajouter la personne' }}

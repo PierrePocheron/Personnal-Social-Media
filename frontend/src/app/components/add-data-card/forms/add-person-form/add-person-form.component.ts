@@ -18,6 +18,9 @@ export class AddPersonFormComponent {
 
   firstName = '';
   lastName = '';
+  nickname = '';
+  job = '';
+
   loading = false;
 
   submit() {
@@ -27,11 +30,17 @@ export class AddPersonFormComponent {
     this.http.post('http://localhost:8080/api/persons', {
       firstName: this.firstName,
       lastName: this.lastName,
+      nickname: this.nickname,
+      job: this.job,
+
     }).subscribe({
       next: () => {
         this.toast.success('✅ Personne ajoutée !');
         this.firstName = '';
         this.lastName = '';
+        this.nickname = '';
+        this.job = '';
+
         this.graphReload.triggerReload();
       },
       error: () => this.toast.error('❌ Erreur lors de l’ajout'),
