@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { ToastService } from '@app/services/toast.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { GraphReloadService } from '@src/app/services/graph-reload.service';
 
 
 interface Person {
@@ -20,6 +21,7 @@ interface Person {
 export class AddRelationFormComponent implements OnInit {
   private http = inject(HttpClient);
   private toast = inject(ToastService);
+  private graphReload = inject(GraphReloadService)
 
   persons: Person[] = [];
   sourceId = '';
@@ -52,6 +54,7 @@ export class AddRelationFormComponent implements OnInit {
         this.targetId = '';
         this.type = '';
         this.context = '';
+        this.graphReload.triggerReload();
       },
       error: () => this.toast.error('❌ Erreur lors de l’ajout'),
       complete: () => this.loading = false,

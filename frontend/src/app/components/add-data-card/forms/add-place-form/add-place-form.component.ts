@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { HttpClient } from '@angular/common/http';
 import { ToastService } from '@app/services/toast.service';
 import { FormsModule } from '@angular/forms';
+import { GraphReloadService } from '@src/app/services/graph-reload.service';
 
 @Component({
   selector: 'app-add-place-form',
@@ -15,6 +16,7 @@ export class AddPlaceFormComponent {
   private fb = inject(FormBuilder);
   private http = inject(HttpClient);
   private toast = inject(ToastService);
+  private graphReload = inject(GraphReloadService)
 
   form: FormGroup = this.fb.group({
     name: ['', Validators.required],
@@ -39,6 +41,7 @@ export class AddPlaceFormComponent {
       next: () => {
         this.toast.success('📍 Lieu ajouté avec succès !');
         this.form.reset();
+        this.graphReload.triggerReload();
       },
       error: () => {
         this.toast.error('Erreur lors de l’ajout du lieu.');

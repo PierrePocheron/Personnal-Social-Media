@@ -3,6 +3,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
 import { ToastService } from "@app/services/toast.service";
+import { GraphReloadService } from "@src/app/services/graph-reload.service";
 
 @Component({
   selector: "app-add-event-form",
@@ -21,6 +22,8 @@ export class AddEventFormComponent {
   description = "";
   startDate = "";
   endDate = "";
+
+  private graphReload = inject(GraphReloadService)
 
   submit() {
     if (!this.title || !this.startDate || !this.endDate) {
@@ -42,6 +45,7 @@ export class AddEventFormComponent {
       next: () => {
         this.toast.success("✅ Événement ajouté avec succès");
         this.resetForm();
+        this.graphReload.triggerReload();
       },
       error: () => {
         this.toast.error("❌ Une erreur est survenue lors de l’ajout");
