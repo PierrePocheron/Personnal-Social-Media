@@ -38,6 +38,15 @@ export class LifeGraphCardComponent implements OnInit {
   hoveredNode = signal<GraphNode | null>(null);
 
   ngOnInit(): void {
+    this.loadGraphData();
+  }
+
+  public reload(): void {
+    this.loadGraphData();
+  }
+
+  private loadGraphData(): void {
+    this.loading.set(true);
     this.http.get<any>('http://localhost:8080/api/me').subscribe({
       next: (data) => {
         const nodes: GraphNode[] = [];
@@ -61,7 +70,6 @@ export class LifeGraphCardComponent implements OnInit {
           }
         };
 
-
         const addEdge = (source: string, target: string) => {
           const exists = edges.some(
             (e) => (e.source === source && e.target === target) || (e.source === target && e.target === source)
@@ -69,7 +77,7 @@ export class LifeGraphCardComponent implements OnInit {
           if (!exists && source !== target) edges.push({ source, target });
         };
 
-        // 👤 Moi (utilisateur principal)
+        // 👤 Utilisateur
         addNode(
           data.id,
           data.nickname ?? `${data.firstName} ${data.lastName}`,
@@ -82,82 +90,53 @@ export class LifeGraphCardComponent implements OnInit {
           }
         );
 
-        // 👥 Relations et connexions secondaires
+        // 👥 Relations
         data.relations.forEach((rel: any) => {
           const p = rel.target;
-
-          // 👤 Personne
-          addNode(
-            p.id,
-            p.nickname ?? `${p.firstName} ${p.lastName}`,
-            'person',
-            {
-              firstName: p.firstName,
-              lastName: p.lastName,
-              nickname: p.nickname,
-              job: p.job,
-            }
-          );
+          addNode(p.id, p.nickname ?? `${p.firstName} ${p.lastName}`, 'person', {
+            firstName: p.firstName,
+            lastName: p.lastName,
+            nickname: p.nickname,
+            job: p.job,
+          });
           addEdge(data.id, p.id);
 
-          // 📅 Participations → événements
           p.participations?.forEach((part: any) => {
             const ev = part.event;
-            addNode(
-              ev.id,
-              ev.title,
-              'event',
-              {
-                title: ev.title,
-                date: ev.date,
-                averageRating: ev.averageRating,
-              }
-            );
+            addNode(ev.id, ev.title, 'event', {
+              title: ev.title,
+              date: ev.date,
+              averageRating: ev.averageRating,
+            });
             addEdge(p.id, ev.id);
           });
 
-          // 📍 Lieux fréquentés
           p.places?.forEach((place: any) => {
-            addNode(
-              place.id,
-              place.name,
-              'place',
-              {
-                name: place.name,
-                categories: place.categories ?? [],
-              }
-            );
+            addNode(place.id, place.name, 'place', {
+              name: place.name,
+              categories: place.categories ?? [],
+            });
             addEdge(p.id, place.id);
           });
         });
 
-        // 📅 Mes participations
+        // 📅 Participations
         data.participations?.forEach((part: any) => {
           const ev = part.event;
-          addNode(
-            ev.id,
-            ev.title,
-            'event',
-            {
-              title: ev.title,
-              date: ev.date,
-              averageRating: ev.averageRating,
-            }
-          );
+          addNode(ev.id, ev.title, 'event', {
+            title: ev.title,
+            date: ev.date,
+            averageRating: ev.averageRating,
+          });
           addEdge(data.id, ev.id);
         });
 
-        // 📍 Mes lieux
+        // 📍 Lieux
         data.places?.forEach((place: any) => {
-          addNode(
-            place.id,
-            place.name,
-            'place',
-            {
-              name: place.name,
-              categories: place.categories ?? [],
-            }
-          );
+          addNode(place.id, place.name, 'place', {
+            name: place.name,
+            categories: place.categories ?? [],
+          });
           addEdge(data.id, place.id);
         });
 
@@ -167,11 +146,12 @@ export class LifeGraphCardComponent implements OnInit {
         setTimeout(() => this.renderGraph(), 0);
       },
       error: (err) => {
-        console.error('❌ Erreur lors du chargement du graphe', err);
+        console.error('❌ Erreur chargement du graphe', err);
         this.loading.set(false);
       },
     });
   }
+
 
 
   toggleFilter(type: keyof ReturnType<typeof this.filters>) {
