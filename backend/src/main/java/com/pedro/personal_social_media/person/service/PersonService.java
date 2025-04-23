@@ -4,6 +4,7 @@ import com.pedro.personal_social_media.person.model.Person;
 import com.pedro.personal_social_media.person.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,4 +32,16 @@ public class PersonService {
     public void delete(UUID id) {
         repository.deleteById(id);
     }
+
+    public Optional<Person> getMainUser() {
+        return repository.findByIsMainUserTrue();
+    }
+
+    public void setAsMainUser(UUID id) {
+        repository.clearMainUser();
+        Person person = getById(id);
+        person.setMainUser(true);
+        repository.save(person);
+    }
+
 }

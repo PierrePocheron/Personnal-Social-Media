@@ -4,6 +4,9 @@ import com.pedro.personal_social_media.person.model.Person;
 import com.pedro.personal_social_media.person.service.PersonService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +30,15 @@ public class PersonController {
     @GetMapping("/{id}")
     public Person getById(@PathVariable UUID id) {
         return service.getById(id);
+    }
+
+    @GetMapping("/main")
+    public Person getMainUser() {
+        return service.getMainUser()
+        .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND,
+            "Aucun utilisateur principal n'est défini."
+        ));
     }
 
     @PostMapping

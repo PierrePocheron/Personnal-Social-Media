@@ -27,6 +27,10 @@ public class Person {
     @GeneratedValue
     private UUID id; // ⚠️ identifiant unique, généré automatiquement par Neo4J
 
+    @Builder.Default
+    private boolean isMainUser = false;
+
+
     @NotBlank(message = "Le prénom est requis")
     private String firstName;
 
