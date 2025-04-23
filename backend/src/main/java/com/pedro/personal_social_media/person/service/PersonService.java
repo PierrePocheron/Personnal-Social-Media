@@ -8,6 +8,9 @@ import java.util.Optional;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.transaction.annotation.Transactional;
+
+
 @Service
 public class PersonService {
 
@@ -37,11 +40,14 @@ public class PersonService {
         return repository.findByIsMainUserTrue();
     }
 
-    public void setAsMainUser(UUID id) {
+    @Transactional
+    public Optional<Person> setMainUser(UUID id) {
         repository.clearMainUser();
-        Person person = getById(id);
-        person.setMainUser(true);
-        repository.save(person);
+        return repository.findById(id).map(person -> {
+            person.setMainUser(true);
+            return repository.save(person);
+        });
     }
+
 
 }

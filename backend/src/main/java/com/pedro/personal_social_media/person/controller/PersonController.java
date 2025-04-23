@@ -46,6 +46,15 @@ public class PersonController {
         return service.save(person);
     }
 
+    @PostMapping("/{id}/set-main")
+    public Person setMainUser(@PathVariable UUID id) {
+        return service.setMainUser(id)
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Utilisateur introuvable"
+            ));
+    }
+
+
     @DeleteMapping("/{id}")
     public void delete(@PathVariable UUID id) {
         service.delete(id);
