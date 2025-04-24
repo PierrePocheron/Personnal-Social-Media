@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, effect } from '@angular/core';
+import { Component, computed, Injector, inject, signal, effect, ViewChild, ElementRef, AfterViewInit, runInInjectionContext } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Person } from '@app/models/person.model';
 import { FocusedPersonService } from '@app/services/focused-person.service';
@@ -16,11 +16,28 @@ import { FormsModule } from '@angular/forms';
 export class UserCardComponent {
   private focusedPersonService = inject(FocusedPersonService);
   private personService = inject(PersonService);
+  private injector = inject(Injector);
+
 
 
   persons = signal<Person[]>([]);
   dropdownOpen = signal(false);
   search = signal('');
+  highlightedIndex = signal(0);
+
+  @ViewChild('searchInput') searchInputRef!: ElementRef<HTMLInputElement>;
+
+  ngAfterViewInit(): void {
+    runInInjectionContext(this.injector, () => {
+      effect(() => {
+        if (this.dropdownOpen()) {
+          setTimeout(() => this.searchInputRef?.nativeElement?.focus(), 0);
+        }
+      });
+    });
+  }
+
+
 
 
   user = computed(() => {
@@ -45,7 +62,10 @@ export class UserCardComponent {
 
 
   toggleDropdown() {
+    console.log('🟢 toggleDropdown appelé');
     this.dropdownOpen.update((v) => !v);
+    this.highlightedIndex.set(0);
+    this.search.set('');
   }
 
   filteredPersons = computed(() => {
@@ -58,9 +78,34 @@ export class UserCardComponent {
 
 
 
-  selectPerson(id: string) {
+  selectPerson(id: string | undefined) {
+    if (!id) return;
     this.focusedPersonService.setFocusedPersonId(id);
-    this.dropdownOpen.set(false);
+    //this.showDropdown.set(false);
+  }
+
+  handleKeydown(event: KeyboardEvent) {
+    const total = this.filteredPersons().length;
+    const index = this.highlightedIndex();
+
+    if (event.key === 'ArrowDown') {
+      this.highlightedIndex.set((index + 1) % total);
+      event.preventDefault();
+    } else if (event.key === 'ArrowUp') {
+      this.highlightedIndex.set((index - 1 + total) % total);
+      event.preventDefault();
+    } else if (event.key === 'Enter') {
+      this.selectPerson(this.filteredPersons()[index]?.id);
+      event.preventDefault();
+    }
+  }
+
+  get searchValue(): string {
+    return this.search();
+  }
+
+  set searchValue(value: string) {
+    this.search.set(value);
   }
 
 

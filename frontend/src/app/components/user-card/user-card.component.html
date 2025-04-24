@@ -1,42 +1,50 @@
 <ng-container *ngIf="user() as u; else loading">
-    <div class="user-card rounded-2xl shadow-xl bg-white/80 backdrop-blur-sm p-6 w-full max-w-md transition hover:scale-[1.01] duration-300">
+    <div class="relative user-card rounded-2xl shadow-xl bg-white/80 backdrop-blur-sm p-6 w-full max-w-md transition hover:scale-[1.01] duration-300">
+
+        <!-- 🧍‍♂️ Header avec Avatar + Nom + Bouton changement -->
         <div class="flex items-center gap-4">
             <div class="flex items-center justify-center w-16 h-16 text-2xl font-semibold text-white rounded-full shadow-md avatar bg-gradient-to-tr from-blue-500 to-indigo-500">
                 {{ initials }}
             </div>
-            <div>
-                <h2 class="text-xl font-bold text-gray-800">
-                    {{ u.firstName }} {{ u.lastName }}
-                </h2>
+            <div class="flex-1">
+                <div class="flex items-center justify-between gap-2">
+                    <h2 class="text-xl font-bold text-gray-800">
+                        {{ u.firstName }} {{ u.lastName }}
+                    </h2>
+
+                    <!-- 🎯 Bouton de changement -->
+                    <button (click)="toggleDropdown()" class="text-sm text-indigo-500 transition hover:text-indigo-700 focus:outline-none" title="Changer de personne">
+              ⌄
+            </button>
+                </div>
                 <p class="text-sm text-gray-500">{{ u.nickname }}</p>
             </div>
         </div>
 
-        <div class="relative">
-            <button (click)="toggleDropdown()" class="ml-auto text-gray-500 transition hover:text-gray-800">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            <div *ngIf="dropdownOpen()" class="absolute right-0 z-50 w-64 p-2 mt-2 overflow-y-auto bg-white rounded-lg shadow-xl ring-1 ring-black/10 max-h-80 animate-fade-in">
-                <input [(ngModel)]="search" type="text" placeholder="Rechercher..." class="w-full p-2 mb-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-
-                <button *ngFor="let p of filteredPersons()" (click)="selectPerson(p.id!)" class="block w-full text-left px-3 py-1.5 rounded hover:bg-indigo-100 transition">
-                {{ p.firstName }} {{ p.lastName }} <span class="text-gray-400" *ngIf="p.nickname">({{ p.nickname }})</span>
-              </button>
-            </div>
-        </div>
-
-
+        <!-- 🧾 Infos perso -->
         <div class="mt-4 space-y-1 text-sm text-gray-600">
             <p><strong>Job :</strong> {{ u.job }} chez {{ u.company }}</p>
             <p><strong>Email :</strong> {{ u.email }}</p>
             <p><strong>Téléphone :</strong> {{ u.phoneNumber }}</p>
         </div>
+
+        <!-- 🔍 Dropdown Sélecteur -->
+        <div *ngIf="dropdownOpen()" class="absolute left-0 z-50 w-full p-2 mt-2 bg-white border border-gray-200 shadow-2xl top-full rounded-xl animate-fade-in">
+            <!-- 🧠 Barre de recherche -->
+            <input #searchInput type="text" [(ngModel)]="searchValue" (keydown)="handleKeydown($event)" placeholder="Rechercher une personne..." class="w-full px-3 py-2 mb-2 text-sm border rounded-lg focus:outline-none focus:ring focus:ring-indigo-300" />
+
+            <!-- 👥 Résultats -->
+            <div class="overflow-y-auto max-h-48">
+                <button *ngFor="let p of filteredPersons(); let i = index" (click)="selectPerson(p.id)" [class.bg-indigo-100]="highlightedIndex() === i" class="block w-full px-4 py-2 text-sm text-left rounded hover:bg-indigo-50">
+            {{ p.firstName }} {{ p.lastName }}
+            <span *ngIf="p.nickname" class="text-gray-400">({{ p.nickname }})</span>
+          </button>
+            </div>
+        </div>
     </div>
 </ng-container>
 
+<!-- ⏳ Loader -->
 <ng-template #loading>
     <div class="bg-white shadow-xl rounded-2xl h-52 animate-pulse"></div>
 </ng-template>
