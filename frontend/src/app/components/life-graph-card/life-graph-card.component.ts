@@ -10,6 +10,7 @@ import { CommonModule } from "@angular/common";
 import cytoscape from "cytoscape";
 import { HttpClient } from "@angular/common/http";
 import { GraphReloadService } from "@app/services/graph-reload.service";
+import { FocusedPersonService } from '@app/services/focused-person.service';
 
 type GraphNode = {
   id: string;
@@ -31,13 +32,21 @@ type GraphEdge = {
   standalone: true,
   imports: [CommonModule],
 })
+
 export class LifeGraphCardComponent implements OnInit {
   private http = inject(HttpClient);
   private graphReload = inject(GraphReloadService);
+  private focusedPersonService = inject(FocusedPersonService)
 
   constructor() {
   let firstLoad = true;
+
   effect(() => {
+    const personId = this.focusedPersonService.focusedPersonId();
+    if (personId) {
+      this.reload();
+    }
+
     this.graphReload.onReload()();
     this.reload();
   });
@@ -70,7 +79,13 @@ export class LifeGraphCardComponent implements OnInit {
   private loadGraphData(callback?: () => void): void {
     this.loading.set(true);
 
-    this.http.get<any>("http://localhost:8080/api/me").subscribe({
+    const personId = this.focusedPersonService.focusedPersonId();
+    if (!personId) {
+      this.loading.set(false);
+      return;
+    }
+
+    this.http.get<any>(`http://localhost:8080/api/persons/${personId}`).subscribe({
       next: (data) => {
         const nodes: GraphNode[] = [];
         const edges: GraphEdge[] = [];
