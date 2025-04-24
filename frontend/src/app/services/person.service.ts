@@ -11,7 +11,16 @@ export class PersonService {
 
   constructor(private http: HttpClient) {}
 
+  getMainUser(): Observable<Person> {
+    return this.http.get<Person>('http://localhost:8080/api/persons/main');
+  }
+
+
   getMe(): Observable<Person> {
     return this.http.get<Person>(this.apiUrl);
+  }
+
+  getPersonById(id: string): Observable<Person> {
+    return this.http.get<Person>(`http://localhost:8080/api/persons/${id}`);
   }
 }
