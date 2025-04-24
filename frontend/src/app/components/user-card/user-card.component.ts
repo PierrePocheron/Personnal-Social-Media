@@ -1,4 +1,4 @@
-import { Component, computed, Injector, inject, signal, effect, ViewChild, ElementRef, AfterViewInit, runInInjectionContext } from '@angular/core';
+import { Component, computed, Injector, inject, signal, effect, ViewChild, HostListener, ElementRef, AfterViewInit, runInInjectionContext } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Person } from '@app/models/person.model';
 import { FocusedPersonService } from '@app/services/focused-person.service';
@@ -26,6 +26,15 @@ export class UserCardComponent {
   highlightedIndex = signal(0);
 
   @ViewChild('searchInput') searchInputRef!: ElementRef<HTMLInputElement>;
+  @ViewChild('dropdownContainer') dropdownContainerRef!: ElementRef;
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (this.dropdownOpen() && this.dropdownContainerRef && !this.dropdownContainerRef.nativeElement.contains(target)) {
+      this.dropdownOpen.set(false);
+    }
+  }
 
   ngAfterViewInit(): void {
     runInInjectionContext(this.injector, () => {
@@ -36,9 +45,6 @@ export class UserCardComponent {
       });
     });
   }
-
-
-
 
   user = computed(() => {
     const data = this.focusedPersonService.focusedPerson() ?? null;
@@ -81,14 +87,17 @@ export class UserCardComponent {
   selectPerson(id: string | undefined) {
     if (!id) return;
     this.focusedPersonService.setFocusedPersonId(id);
-    //this.showDropdown.set(false);
+    this.dropdownOpen.set(false);
   }
 
   handleKeydown(event: KeyboardEvent) {
     const total = this.filteredPersons().length;
     const index = this.highlightedIndex();
 
-    if (event.key === 'ArrowDown') {
+    if (event.key === 'Escape') {
+      this.dropdownOpen.set(false);
+      event.preventDefault();
+    } else if (event.key === 'ArrowDown') {
       this.highlightedIndex.set((index + 1) % total);
       event.preventDefault();
     } else if (event.key === 'ArrowUp') {
