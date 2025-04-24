@@ -3,6 +3,10 @@ package com.pedro.personal_social_media.person.service;
 import com.pedro.personal_social_media.person.model.Person;
 import com.pedro.personal_social_media.person.repository.PersonRepository;
 import org.springframework.stereotype.Service;
+import com.pedro.personal_social_media.person.dto.MeStatsDTO;
+import com.pedro.personal_social_media.relation.model.Relation;
+import com.pedro.personal_social_media.event.model.Participation;
+
 
 import java.util.Optional;
 import java.util.List;
@@ -47,6 +51,31 @@ public class PersonService {
             person.setMainUser(true);
             return repository.save(person);
         });
+    }
+
+    public MeStatsDTO getStatsForPerson(UUID id) {
+        Person person = repository.findById(id).orElseThrow(() ->
+            new RuntimeException("Personne non trouvée")
+        );
+
+        int relationsCount = person.getRelations() != null ? person.getRelations().size() : 0;
+        int eventsCount = person.getParticipations() != null ? person.getParticipations().size() : 0;
+
+        double averageNote = 0.0;
+        if (person.getParticipations() != null && !person.getParticipations().isEmpty()) {
+            averageNote = person.getParticipations().stream()
+                .mapToInt(Participation::getNote)
+                .average()
+                .orElse(0.0);
+        }
+
+        return MeStatsDTO.builder()
+            .id(person.getId())
+            .name(person.getName())
+            .relationsCount(relationsCount)
+            .eventsCount(eventsCount)
+            .averageNote(averageNote)
+            .build();
     }
 
 

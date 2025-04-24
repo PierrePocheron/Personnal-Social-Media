@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
-
+import com.pedro.personal_social_media.person.dto.MeStatsDTO;
 
 import java.util.List;
 import java.util.UUID;
@@ -41,6 +41,12 @@ public class PersonController {
         ));
     }
 
+    @GetMapping("/{id}/stats")
+    public MeStatsDTO getStatsForPerson(@PathVariable UUID id) {
+        return service.getStatsForPerson(id);
+    }
+
+
     @PostMapping
     public Person create(@Valid @RequestBody Person person) {
         return service.save(person);
@@ -53,7 +59,6 @@ public class PersonController {
                 HttpStatus.NOT_FOUND, "Utilisateur introuvable"
             ));
     }
-
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable UUID id) {
