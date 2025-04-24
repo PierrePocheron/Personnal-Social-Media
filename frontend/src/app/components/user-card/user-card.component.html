@@ -12,6 +12,23 @@
             </div>
         </div>
 
+        <div class="relative">
+            <button (click)="toggleDropdown()" class="ml-auto text-gray-500 transition hover:text-gray-800">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <div *ngIf="dropdownOpen()" class="absolute right-0 z-50 w-64 p-2 mt-2 overflow-y-auto bg-white rounded-lg shadow-xl ring-1 ring-black/10 max-h-80 animate-fade-in">
+                <input [(ngModel)]="search" type="text" placeholder="Rechercher..." class="w-full p-2 mb-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+
+                <button *ngFor="let p of filteredPersons()" (click)="selectPerson(p.id!)" class="block w-full text-left px-3 py-1.5 rounded hover:bg-indigo-100 transition">
+                {{ p.firstName }} {{ p.lastName }} <span class="text-gray-400" *ngIf="p.nickname">({{ p.nickname }})</span>
+              </button>
+            </div>
+        </div>
+
+
         <div class="mt-4 space-y-1 text-sm text-gray-600">
             <p><strong>Job :</strong> {{ u.job }} chez {{ u.company }}</p>
             <p><strong>Email :</strong> {{ u.email }}</p>

@@ -23,4 +23,8 @@ export class PersonService {
   getPersonById(id: string): Observable<Person> {
     return this.http.get<Person>(`http://localhost:8080/api/persons/${id}`);
   }
+
+  getAll(): Observable<Person[]> {
+    return this.http.get<Person[]>('http://localhost:8080/api/persons')
+  }
 }
