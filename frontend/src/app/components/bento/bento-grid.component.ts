@@ -52,7 +52,7 @@ export class BentoGridComponent {
         },
       });
 
-      this.statsService.getStats().subscribe({
+      this.statsService.getStatsByPersonId(personId).subscribe({
         next: (stats) => {
           console.log('✅ [BentoGrid] Stats chargé :', stats);
           this.statsSignal.set(stats);

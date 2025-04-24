@@ -11,4 +11,8 @@ export class StatsService {
   getStats(): Observable<MeStats> {
     return this.http.get<MeStats>('http://localhost:8080/api/me/stats');
   }
+
+  getStatsByPersonId(id: string): Observable<MeStats> {
+    return this.http.get<MeStats>(`http://localhost:8080/api/persons/${id}/stats`);
+  }
 }

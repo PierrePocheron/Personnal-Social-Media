@@ -11,10 +11,13 @@
             <p class="text-xs">Événements</p>
         </div>
         <div>
-            <p class="text-lg font-bold">{{ stats.averageNote || '–' }}</p>
+            <p class="text-lg font-bold">
+                {{ stats.averageNote !== null ? (stats.averageNote | number:'1.1-1') : '–' }}
+            </p>
             <p class="text-xs">Note Moy.</p>
         </div>
     </div>
+
 
     <div class="space-y-1 text-sm text-gray-600">
         <p><strong>👤 Personne la + fréquente :</strong> {{ stats.mostFrequentPerson || '–' }}</p>
