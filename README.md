@@ -19,19 +19,25 @@ Une application sociale privée pour organiser, visualiser et enrichir tes relat
 - Neo4j (local ou Docker)
 - IDE compatible Java/JS (Cursor, IntelliJ, VSCode...)
 
-### ⚙️ Lancer le backend
+### 🐳 1. Lancer la Base de Données (Docker)
+
+```bash
+docker-compose up -d
+```
+
+### ⚙️ 2. Lancer le backend
 
 ```bash
 cd backend
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
-### ⚙️ Lancer le frontend
+### 💻 3. Lancer le frontend
 
 ```bash
 cd frontend
 npm install
-npm run dev
+npm start
 ```
 
 </details>
@@ -57,7 +63,7 @@ app.init.fake-data=true
 # Connexion à Neo4j
 spring.neo4j.uri=bolt://localhost:7687
 spring.neo4j.authentication.username=neo4j
-spring.neo4j.authentication.password=admin
+spring.neo4j.authentication.password=rootroot
 ```
 
 ### 🌐 Réinitialisation de la base
@@ -83,7 +89,7 @@ curl http://localhost:8080/api/init/data
 | **Neo4j + Spring Data**   | Base graphe |
 | **Lombok**                | Génération de code |
 | **Java 21**               | Backend |
-| **Node.js + Vite + React** (à venir) | Frontend |
+| **Angular 19**            | Frontend |
 | **Maven**                 | Build backend |
 | **Docker** (optionnel)    | Neo4j local |
 

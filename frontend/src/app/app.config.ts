@@ -7,7 +7,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // ✅ Obligatoire pour ngx-toastr
 import { ToastrModule } from 'ngx-toastr';
 
-
+import { LucideAngularModule, LucideIconProvider, LUCIDE_ICONS, Home, Activity, Calendar, Settings, Database } from 'lucide-angular';
 
 
 export const appConfig: ApplicationConfig = {
@@ -23,6 +23,7 @@ export const appConfig: ApplicationConfig = {
       timeOut: 3000,
       positionClass: 'toast-bottom-right',
       preventDuplicates: true,
-    }))
+    })),
+    { provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider({ Home, Activity, Calendar, Settings, Database }) }
   ]
 };

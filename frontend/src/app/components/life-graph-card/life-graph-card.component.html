@@ -1,4 +1,4 @@
-<div class="p-6 bg-white rounded-2xl shadow-xl w-full min-h-[400px] relative">
+<div class="p-6 glass-panel rounded-2xl shadow-xl w-full min-h-[400px] relative animate-fade-in">
     <!-- 🎛️ Filtres -->
     <div class="flex flex-wrap gap-2 mb-4">
         <button type="button" class="px-3 py-1 text-sm font-medium transition border rounded" [class.bg-indigo-500]="filters().person" [class.text-white]="filters().person" [class.border-indigo-500]="filters().person" [class.text-indigo-500]="!filters().person"
@@ -17,37 +17,16 @@
       </button>
     </div>
 
-    <!-- 📈 Graphe -->
-    <div id="cy" class="w-full h-[600px] sm:h-[720px] bg-slate-50 rounded transition-all duration-300" *ngIf="!loading()"></div>
-
-    <!-- 🧠 Infobox dynamique enrichie -->
-    <div *ngIf="hoveredNode()" class="absolute w-64 px-4 py-3 text-sm text-gray-800 bg-white border border-gray-200 shadow-md top-6 right-6 rounded-xl">
-        <div class="mb-1 text-base font-semibold text-gray-900">
-            {{ hoveredNode()?.label }}
-        </div>
-
-        <!-- Infos selon type -->
-        <div class="space-y-1 text-xs">
-            <ng-container [ngSwitch]="hoveredNode()?.type">
-                <ng-container *ngSwitchCase="'person'">
-                    🙍‍♂️ <b>Nom :</b> {{ hoveredNode()?.meta?.firstName }} {{ hoveredNode()?.meta?.lastName }}<br /> 🧠 <b>Surnom :</b> {{ hoveredNode()?.meta?.nickname || '–' }}<br /> 💼 <b>Job :</b> {{ hoveredNode()?.meta?.job || '-' }}
-                </ng-container>
-
-                <ng-container *ngSwitchCase="'event'">
-                    📅 <b>Date :</b> {{ hoveredNode()?.meta?.date || '–' }}<br /> ⭐ <b>Note Moy. :</b> {{ hoveredNode()?.meta?.averageRating || '-' }}
-                </ng-container>
-
-                <ng-container *ngSwitchCase="'place'">
-                    🏠 <b>Catégorie(s)</b> : {{ hoveredNode()?.meta?.categories?.join(', ') || '-' }}
-                </ng-container>
-            </ng-container>
-        </div>
-
-        <div class="w-full h-1 mt-2 rounded-full" [style.backgroundColor]="hoveredNode()?.color"></div>
-    </div>
-
     <!-- ⏳ Chargement -->
-    <div *ngIf="loading()" class="w-full h-[600px] sm:h-[720px] bg-gray-200 animate-pulse rounded flex items-center justify-center text-gray-500">
-        Chargement du graphe...
+    <div *ngIf="isLoading()" class="absolute inset-0 flex items-center justify-center z-10 glass-panel rounded-2xl">
+        <app-loading-spinner message="Chargement du graphe..."></app-loading-spinner>
     </div>
+
+    <!-- ❌ Empty State -->
+    <div *ngIf="!isLoading() && allNodes().length === 0" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
+        <lucide-icon name="database" class="w-12 h-12 mb-2 opacity-50"></lucide-icon>
+        <p>Aucune donnée à afficher</p>
+    </div>
+
+    <div id="cy" class="w-full h-[600px] sm:h-[720px] bg-slate-50/5 rounded transition-all duration-300" [class.opacity-0]="isLoading()"></div>
 </div>

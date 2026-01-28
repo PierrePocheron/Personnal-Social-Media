@@ -1,3 +1,11 @@
-<main class="flex flex-col min-h-screen gap-4 p-6 bg-gray-100">
-    <ng-content></ng-content>
-</main>
+<div class="flex min-h-screen bg-app">
+    <!-- ⚓ Sidebar (Dock) -->
+    <app-sidebar></app-sidebar>
+
+    <!-- 🎨 Canvas Principal -->
+    <main class="flex-1 ml-20 p-8 h-screen overflow-y-auto">
+        <div class="max-w-7xl mx-auto animate-slide-up">
+            <ng-content></ng-content>
+        </div>
+    </main>
+</div>

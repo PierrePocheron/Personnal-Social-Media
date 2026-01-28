@@ -3,12 +3,12 @@
     <div class="flex flex-col gap-6">
         <app-user-card *ngIf="user(); else userSkeleton" />
         <ng-template #userSkeleton>
-            <div class="shadow-xl animate-pulse rounded-2xl bg-white/60 h-52"></div>
+            <div class="shadow-xl animate-pulse rounded-2xl glass-panel h-52"></div>
         </ng-template>
 
         <app-stats-card *ngIf="stats(); else statsSkeleton" [stats]="stats()!" />
         <ng-template #statsSkeleton>
-            <div class="h-40 shadow-xl animate-pulse rounded-2xl bg-white/60"></div>
+            <div class="h-40 shadow-xl animate-pulse rounded-2xl glass-panel"></div>
         </ng-template>
 
         <!-- ✅ Nouvelle carte -->

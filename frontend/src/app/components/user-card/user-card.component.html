@@ -1,5 +1,5 @@
 <ng-container *ngIf="user() as u; else loading">
-    <div class="relative w-full max-w-md p-6 bg-white shadow-xl user-card rounded-2xl">
+    <div class="relative w-full max-w-md p-6 glass-panel user-card rounded-2xl animate-fade-in">
         <!-- 🧍‍♂️ Header avec Avatar + Nom + Bouton changement -->
         <div class="flex items-center gap-4">
             <div class="flex items-center justify-center w-16 h-16 text-2xl font-semibold text-white rounded-full shadow-md avatar bg-gradient-to-tr from-blue-500 to-indigo-500">
@@ -38,7 +38,7 @@
         </div>
 
         <!-- 🔍 Dropdown Sélecteur -->
-        <div #dropdownContainer *ngIf="dropdownOpen()" class="absolute left-0 z-[999] w-full p-2 mt-2 bg-white border border-gray-200 shadow-2xl top-full rounded-xl animate-fade-in">
+        <div #dropdownContainer *ngIf="dropdownOpen()" class="absolute left-0 z-[999] w-full p-2 mt-2 glass-panel border border-white/10 shadow-2xl top-full rounded-xl animate-fade-in">
             <!-- 🧠 Barre de recherche -->
             <input #searchInput type="text" [(ngModel)]="searchValue" (keydown)="handleKeydown($event)" placeholder="Rechercher une personne..." class="w-full px-3 py-2 mb-2 text-sm border rounded-lg focus:outline-none focus:ring focus:ring-indigo-300" />
 
@@ -55,5 +55,5 @@
 
 <!-- ⏳ Loader -->
 <ng-template #loading>
-    <div class="bg-white shadow-xl rounded-2xl h-52 animate-pulse"></div>
+    <div class="glass-panel shadow-xl rounded-2xl h-52 animate-pulse"></div>
 </ng-template>

@@ -2,6 +2,7 @@ import {
   Component,
   inject,
   OnInit,
+  OnDestroy,
   signal,
   Signal,
   effect,
@@ -10,7 +11,9 @@ import { CommonModule } from "@angular/common";
 import cytoscape from "cytoscape";
 import { HttpClient } from "@angular/common/http";
 import { GraphReloadService } from "@app/services/graph-reload.service";
+import { LoadingSpinnerComponent } from '../ui/loading-spinner/loading-spinner.component';
 import { FocusedPersonService } from '@app/services/focused-person.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 type GraphNode = {
   id: string;
@@ -30,10 +33,10 @@ type GraphEdge = {
   templateUrl: "./life-graph-card.component.html",
   styleUrls: ["./life-graph-card.component.scss"],
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LoadingSpinnerComponent, LucideAngularModule],
 })
 
-export class LifeGraphCardComponent implements OnInit {
+export class LifeGraphCardComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient);
   private graphReload = inject(GraphReloadService);
   private focusedPersonService = inject(FocusedPersonService)
@@ -64,12 +67,26 @@ export class LifeGraphCardComponent implements OnInit {
   allNodes = signal<GraphNode[]>([]);
   allEdges = signal<GraphEdge[]>([]);
   hoveredNode = signal<GraphNode | null>(null);
+  isLoading = signal<boolean>(true);
+
+  cy: any = null;
+
+  ngOnDestroy(): void {
+    if (this.cy) {
+      this.cy.destroy();
+      this.cy = null;
+    }
+  }
 
   ngOnInit(): void {
     this.loadGraphData();
   }
 
   public reload(): void {
+    if (this.cy) {
+      this.cy.destroy();
+      this.cy = null;
+    }
     this.loadGraphData(() => {
       // ⏳ attend un cycle d'affichage pour garantir que le DOM est prêt
       setTimeout(() => this.renderGraph(), 0);
@@ -81,7 +98,9 @@ export class LifeGraphCardComponent implements OnInit {
 
     const personId = this.focusedPersonService.focusedPersonId();
     if (!personId) {
+      console.warn('⚠️ Aucun utilisateur principal trouvé pour le graphe.');
       this.loading.set(false);
+      this.isLoading.set(false);
       return;
     }
 
@@ -195,6 +214,7 @@ export class LifeGraphCardComponent implements OnInit {
         this.allNodes.set(nodes);
         this.allEdges.set(edges);
         this.loading.set(false);
+        this.isLoading.set(false);
 
         if (callback) {
           setTimeout(() => {
@@ -217,6 +237,11 @@ export class LifeGraphCardComponent implements OnInit {
   }
 
   private renderGraph() {
+    if (this.cy) {
+        this.cy.destroy();
+        this.cy = null;
+    }
+
     const cyContainer = document.getElementById("cy");
     if (!cyContainer) return;
 
@@ -265,7 +290,7 @@ export class LifeGraphCardComponent implements OnInit {
       })),
     ];
 
-    const cy = cytoscape({
+    this.cy = cytoscape({
       container: cyContainer,
       elements,
       style: [
@@ -333,7 +358,7 @@ export class LifeGraphCardComponent implements OnInit {
       },
     });
 
-    cy.on("mouseover", "node", (event) => {
+    this.cy.on("mouseover", "node", (event: any) => {
       const node = event.target;
       const nodeId = node.id();
       const found = this.allNodes().find((n) => n.id === nodeId);
@@ -343,7 +368,7 @@ export class LifeGraphCardComponent implements OnInit {
       }
     });
 
-    cy.on("mouseout", "node", (event) => {
+    this.cy.on("mouseout", "node", (event: any) => {
       event.target.removeClass("hovered"); // ➖ Suppression classe
       this.hoveredNode.set(null);
     });
