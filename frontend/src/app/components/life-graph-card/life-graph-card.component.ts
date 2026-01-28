@@ -149,6 +149,7 @@ export class LifeGraphCardComponent implements OnInit, OnDestroy {
             lastName: data.lastName,
             nickname: data.nickname,
             job: data.job,
+            avatarUrl: data.avatarUrl,
           }
         );
 
@@ -166,6 +167,7 @@ export class LifeGraphCardComponent implements OnInit, OnDestroy {
               lastName: p.lastName,
               nickname: p.nickname,
               job: p.job,
+              avatarUrl: p.avatarUrl,
             }
           );
           addEdge(data.id, p.id);
@@ -279,6 +281,7 @@ export class LifeGraphCardComponent implements OnInit, OnDestroy {
           color: typeColorMap[n.type],
           border: typeBorderMap[n.type],
           shape: typeShapeMap[n.type],
+          avatar: n.meta?.avatarUrl,
         },
       })),
       ...visibleEdges.map((e) => ({
@@ -298,6 +301,8 @@ export class LifeGraphCardComponent implements OnInit, OnDestroy {
           selector: 'node[type="person"]',
           style: {
             shape: "ellipse",
+            "background-image": "data(avatar)",
+            "background-fit": "cover",
           },
         },
         {

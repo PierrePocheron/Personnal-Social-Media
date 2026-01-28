@@ -48,6 +48,8 @@ public class Person {
     @Email(message = "Email invalide")
     private String email;
 
+    private String avatarUrl;
+
     private String instagram;
     private String address;
 
