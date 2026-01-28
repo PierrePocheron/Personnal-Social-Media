@@ -1,35 +1,37 @@
 <form (ngSubmit)="submit()" class="form">
-  <label>
+    <label class="block">
     Source *
-    <select [(ngModel)]="sourceId" name="sourceId" required>
-      <option value="" disabled selected>-- Sélectionner --</option>
-      <option *ngFor="let person of persons" [value]="person.id">
-        {{ person.firstName }} {{ person.lastName }}
-      </option>
-    </select>
+    <app-fancy-select
+      [(model)]="sourceId"
+      [options]="sourceOptions()"
+      placeholder="Sélectionner une personne"
+    >
+    </app-fancy-select>
   </label>
 
-  <label>
+
+    <label>
     Cible *
-    <select [(ngModel)]="targetId" name="targetId" required>
-      <option value="" disabled selected>-- Sélectionner --</option>
-      <option *ngFor="let person of persons" [value]="person.id">
-        {{ person.firstName }} {{ person.lastName }}
-      </option>
-    </select>
+    <app-fancy-select
+      [(model)]="targetId"
+      [options]="targetOptions()"
+      placeholder="Sélectionner la cible..."
+    >
+    </app-fancy-select>
+
   </label>
 
-  <label>
+    <label>
     Type de relation *
     <input [(ngModel)]="type" name="type" required />
   </label>
 
-  <label>
+    <label>
     Contexte
     <input [(ngModel)]="context" name="context" />
   </label>
 
-  <button type="submit" [disabled]="loading || !sourceId || !targetId || !type">
-    {{ loading ? "Ajout en cours..." : "➕ Ajouter la relation" }}
+    <button type="submit" [disabled]="loading() || !sourceId() || !targetId() || !type()">
+    {{ loading() ? "Ajout en cours..." : "➕ Ajouter la relation" }}
   </button>
 </form>
